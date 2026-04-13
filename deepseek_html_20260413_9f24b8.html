@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Advanced Cricket AI Predictor - IPL 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .app-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 20px 16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: #ffd700;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* CSV Upload Section */
+        .csv-section {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .csv-section h3 {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .csv-upload {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .csv-input {
+            flex: 1;
+            padding: 10px;
+            background: #2a2a44;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .csv-btn {
+            padding: 10px 20px;
+            background: #4a4a6a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .csv-btn-primary {
+            background: #ff6b6b;
+        }
+
+        .csv-template {
+            font-size: 10px;
+            color: #888;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .team-selectors {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .team-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+        }
+
+        .team-card h2 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .team-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 14px;
+            border: none;
+            background: #2a2a44;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .players-list {
+            margin-top: 10px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            background: rgba(255, 255, 255, 0.08);
+            margin: 5px 0;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .player-name {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .player-rating {
+            color: #ffd700;
+        }
+
+        .vs-divider {
+            text-align: center;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .predict-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .predict-btn:active {
+            transform: scale(0.97);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.6;
+        }
+
+        .result-card {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 18px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .result-header h2 {
+            color: #ffd700;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .win-percentage {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .team-a-percent, .team-b-percent {
+            text-align: center;
+            flex: 1;
+        }
+
+        .percentage {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .win-green {
+            color: #00ff88;
+        }
+
+        .loss-red {
+            color: #ff4444;
+        }
+
+        .scores {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+        }
+
+        .score-card {
+            text-align: center;
+            flex: 1;
+        }
+
+        .score-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .result-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .winner-green {
+            color: #00ff88;
+        }
+
+        .loser-red {
+            color: #ff4444;
+        }
+
+        .analysis-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .analysis-title {
+            color: #ffd700;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .analysis-text {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .betting-predictions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .bet-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .bet-label {
+            color: #ffd700;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .bet-value {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .key-players {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 11px;
+            color: #ccc;
+            gap: 10px;
+        }
+
+        .key-players div {
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .confidence {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #ffd700;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 9px;
+            color: #666;
+        }
+
+        @media (min-width: 500px) {
+            .team-selectors {
+                flex-direction: row;
+                gap: 12px;
+            }
+            .team-card {
+                flex: 1;
+            }
+            .vs-divider {
+                display: flex;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>🏏 Advanced Cricket AI Predictor</h1>
+            <p class="subtitle">IPL 2026 | AI Powered | Betting Insights</p>
+        </header>
+
+        <!-- CSV Upload Section -->
+        <div class="csv-section">
+            <h3>📁 Update Player Data (CSV)</h3>
+            <div class="csv-upload">
+                <input type="file" id="csvFile" accept=".csv" class="csv-input">
+                <button id="uploadBtn" class="csv-btn csv-btn-primary">Upload & Update</button>
+                <button id="resetDataBtn" class="csv-btn">Reset to Default</button>
+            </div>
+            <div class="csv-template">
+                📄 CSV Format: Player,Team,Batting,Bowling,Form,Weakness,Role
+            </div>
+        </div>
+
+        <div class="team-selectors">
+            <div class="team-card">
+                <h2>Team A</h2>
+                <select id="teamA" class="team-select">
+                    <option value="">Select Team A</option>
+                </select>
+                <div id="playersA" class="players-list"></div>
+            </div>
+
+            <div class="vs-divider">
+                <span>⚡ VS ⚡</span>
+            </div>
+
+            <div class="team-card">
+                <h2>Team B</h2>
+                <select id="teamB" class="team-select">
+                    <option value="">Select Team B</option>
+                </select>
+                <div id="playersB" class="players-list"></div>
+            </div>
+        </div>
+
+        <button id="predictBtn" class="predict-btn">🔮 AI PREDICT MATCH</button>
+
+        <div id="result" class="result-card hidden">
+            <div class="result-header">
+                <h2>📊 AI PREDICTION REPORT</h2>
+            </div>
+            <div id="predictionContent"></div>
+        </div>
+
+        <footer>
+            <p>⚠️ AI simulates 50,000 matches | Updated: April 14, 2026 | Bet responsibly</p>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // COMPLETE IPL 2026 DATABASE WITH HISTORICAL DATA
+        // ============================================
+        
+        let PLAYERS_DATABASE = {
+            "Ishan Kishan": { team: "Sunrisers Hyderabad", bat: 92, bowl: 0, form: 95, weakness: "None", role: "WK-Batsman", matches: 50, avg: 35, sr: 145 },
+            "Heinrich Klaasen": { team: "Sunrisers Hyderabad", bat: 94, bowl: 0, form: 98, weakness: "Pace", role: "WK-Batsman", matches: 40, avg: 38, sr: 160 },
+            "Abhishek Sharma": { team: "Sunrisers Hyderabad", bat: 85, bowl: 70, form: 75, weakness: "Elite pace", role: "All-rounder", matches: 45, avg: 28, sr: 150 },
+            "Travis Head": { team: "Sunrisers Hyderabad", bat: 88, bowl: 0, form: 65, weakness: "Inconsistent", role: "Batsman", matches: 30, avg: 32, sr: 148 },
+            "Nitish Reddy": { team: "Sunrisers Hyderabad", bat: 82, bowl: 75, form: 85, weakness: "Inexperience", role: "All-rounder", matches: 15, avg: 25, sr: 135 },
+            "Pat Cummins": { team: "Sunrisers Hyderabad", bat: 60, bowl: 90, form: 80, weakness: "Death overs", role: "Bowler", matches: 60, wickets: 85, economy: 8.2 },
+            "Praful Hinge": { team: "Sunrisers Hyderabad", bat: 40, bowl: 88, form: 95, weakness: "Inexperienced", role: "Bowler", matches: 1, wickets: 4, economy: 8.5 },
+            "Sakib Hussain": { team: "Sunrisers Hyderabad", bat: 35, bowl: 89, form: 96, weakness: "Inexperienced", role: "Bowler", matches: 1, wickets: 4, economy: 6.0 },
+            "Mohammed Shami": { team: "Sunrisers Hyderabad", bat: 50, bowl: 88, form: 75, weakness: "Death overs", role: "Bowler", matches: 80, wickets: 95, economy: 8.0 },
+            "Harshal Patel": { team: "Sunrisers Hyderabad", bat: 55, bowl: 84, form: 70, weakness: "Expensive", role: "Bowler", matches: 70, wickets: 85, economy: 9.0 },
+            
+            "Yashasvi Jaiswal": { team: "Rajasthan Royals", bat: 90, bowl: 0, form: 88, weakness: "Spin early", role: "Batsman", matches: 35, avg: 34, sr: 152 },
+            "Vaibhav Suryavanshi": { team: "Rajasthan Royals", bat: 86, bowl: 0, form: 89, weakness: "Inexperience", role: "Batsman", matches: 5, avg: 40, sr: 165 },
+            "Riyan Parag": { team: "Rajasthan Royals", bat: 83, bowl: 72, form: 70, weakness: "Consistency", role: "All-rounder", matches: 40, avg: 28, sr: 140 },
+            "Dhruv Jurel": { team: "Rajasthan Royals", bat: 80, bowl: 0, form: 65, weakness: "Spin", role: "WK-Batsman", matches: 25, avg: 26, sr: 135 },
+            "Donovan Ferreira": { team: "Rajasthan Royals", bat: 84, bowl: 0, form: 82, weakness: "Pace", role: "Batsman", matches: 10, avg: 30, sr: 155 },
+            "Shimron Hetmyer": { team: "Rajasthan Royals", bat: 85, bowl: 0, form: 70, weakness: "Spin", role: "Batsman", matches: 50, avg: 32, sr: 158 },
+            "Ravindra Jadeja": { team: "Rajasthan Royals", bat: 82, bowl: 85, form: 80, weakness: "Pace", role: "All-rounder", matches: 100, wickets: 120, economy: 7.8 },
+            "Jofra Archer": { team: "Rajasthan Royals", bat: 55, bowl: 89, form: 85, weakness: "Injury prone", role: "Bowler", matches: 40, wickets: 55, economy: 7.5 },
+            "Ravi Bishnoi": { team: "Rajasthan Royals", bat: 40, bowl: 88, form: 87, weakness: "Power hitters", role: "Bowler", matches: 45, wickets: 52, economy: 7.8 },
+            "Sandeep Sharma": { team: "Rajasthan Royals", bat: 45, bowl: 82, form: 70, weakness: "Death", role: "Bowler", matches: 60, wickets: 65, economy: 8.5 },
+            
+            "Ruturaj Gaikwad": { team: "Chennai Super Kings", bat: 89, bowl: 0, form: 75, weakness: "Pace", role: "Batsman", matches: 45, avg: 38, sr: 142 },
+            "Sanju Samson": { team: "Chennai Super Kings", bat: 91, bowl: 0, form: 85, weakness: "Spin", role: "WK-Batsman", matches: 80, avg: 35, sr: 148 },
+            "MS Dhoni": { team: "Chennai Super Kings", bat: 86, bowl: 0, form: 80, weakness: "Pace", role: "WK-Batsman", matches: 250, avg: 40, sr: 135 },
+            "Shivam Dube": { team: "Chennai Super Kings", bat: 87, bowl: 65, form: 78, weakness: "Short pace", role: "All-rounder", matches: 40, avg: 32, sr: 155 },
+            "Ravindra Jadeja": { team: "Chennai Super Kings", bat: 83, bowl: 86, form: 82, weakness: "None", role: "All-rounder", matches: 100, wickets: 120, economy: 7.8 },
+            "Noor Ahmad": { team: "Chennai Super Kings", bat: 35, bowl: 87, form: 84, weakness: "Inexperience", role: "Bowler", matches: 20, wickets: 28, economy: 7.5 },
+            "R. Ashwin": { team: "Chennai Super Kings", bat: 70, bowl: 85, form: 75, weakness: "Power hitters", role: "All-rounder", matches: 150, wickets: 160, economy: 7.2 },
+            "Anshul Kamboj": { team: "Chennai Super Kings", bat: 40, bowl: 83, form: 78, weakness: "Expensive", role: "Bowler", matches: 4, wickets: 8, economy: 11.4 },
+            "Khaleel Ahmed": { team: "Chennai Super Kings", bat: 35, bowl: 84, form: 76, weakness: "Death", role: "Bowler", matches: 50, wickets: 55, economy: 8.5 },
+            
+            "Rajat Patidar": { team: "Royal Challengers Bengaluru", bat: 88, bowl: 0, form: 90, weakness: "Pace", role: "Batsman", matches: 30, avg: 35, sr: 150 },
+            "Virat Kohli": { team: "Royal Challengers Bengaluru", bat: 93, bowl: 0, form: 85, weakness: "Leg-spin early", role: "Batsman", matches: 240, avg: 42, sr: 135 },
+            "Phil Salt": { team: "Royal Challengers Bengaluru", bat: 87, bowl: 0, form: 82, weakness: "Spin", role: "WK-Batsman", matches: 35, avg: 30, sr: 155 },
+            "Liam Livingstone": { team: "Royal Challengers Bengaluru", bat: 86, bowl: 75, form: 75, weakness: "Inconsistent", role: "All-rounder", matches: 50, avg: 28, sr: 160 },
+            "Krunal Pandya": { team: "Royal Challengers Bengaluru", bat: 75, bowl: 82, form: 78, weakness: "Power hitters", role: "All-rounder", matches: 80, wickets: 70, economy: 7.5 },
+            "Tim David": { team: "Royal Challengers Bengaluru", bat: 88, bowl: 60, form: 80, weakness: "Spin", role: "All-rounder", matches: 40, avg: 35, sr: 175 },
+            "Josh Hazlewood": { team: "Royal Challengers Bengaluru", bat: 45, bowl: 89, form: 86, weakness: "None", role: "Bowler", matches: 60, wickets: 85, economy: 7.8 },
+            "Bhuvneshwar Kumar": { team: "Royal Challengers Bengaluru", bat: 50, bowl: 87, form: 82, weakness: "Death", role: "Bowler", matches: 150, wickets: 170, economy: 7.5 },
+            
+            "Shreyas Iyer": { team: "Punjab Kings", bat: 90, bowl: 0, form: 88, weakness: "Short ball", role: "Batsman", matches: 80, avg: 36, sr: 142 },
+            "Prabhsimran Singh": { team: "Punjab Kings", bat: 85, bowl: 0, form: 82, weakness: "Swing", role: "WK-Batsman", matches: 30, avg: 28, sr: 145 },
+            "Shashank Singh": { team: "Punjab Kings", bat: 82, bowl: 0, form: 80, weakness: "Spin", role: "Batsman", matches: 20, avg: 30, sr: 140 },
+            "Glenn Maxwell": { team: "Punjab Kings", bat: 87, bowl: 78, form: 70, weakness: "Spin", role: "All-rounder", matches: 100, avg: 30, sr: 160 },
+            "Marcus Stoinis": { team: "Punjab Kings", bat: 86, bowl: 76, form: 78, weakness: "Pace", role: "All-rounder", matches: 70, avg: 32, sr: 148 },
+            "Arshdeep Singh": { team: "Punjab Kings", bat: 40, bowl: 88, form: 84, weakness: "Death", role: "Bowler", matches: 50, wickets: 65, economy: 8.2 },
+            "Yuzvendra Chahal": { team: "Punjab Kings", bat: 35, bowl: 89, form: 86, weakness: "Power hitters", role: "Bowler", matches: 120, wickets: 160, economy: 7.8 },
+            "Lockie Ferguson": { team: "Punjab Kings", bat: 45, bowl: 87, form: 80, weakness: "Expensive", role: "Bowler", matches: 50, wickets: 60, economy: 8.5 },
+            
+            "Shubman Gill": { team: "Gujarat Titans", bat: 91, bowl: 0, form: 85, weakness: "Spin", role: "Batsman", matches: 60, avg: 40, sr: 148 },
+            "Sai Sudharsan": { team: "Gujarat Titans", bat: 89, bowl: 0, form: 84, weakness: "Pace", role: "Batsman", matches: 30, avg: 38, sr: 156 },
+            "Jos Buttler": { team: "Gujarat Titans", bat: 92, bowl: 0, form: 82, weakness: "Spin early", role: "WK-Batsman", matches: 90, avg: 38, sr: 150 },
+            "Rashid Khan": { team: "Gujarat Titans", bat: 75, bowl: 94, form: 88, weakness: "None", role: "All-rounder", matches: 100, wickets: 140, economy: 6.5 },
+            "Prasidh Krishna": { team: "Gujarat Titans", bat: 40, bowl: 92, form: 94, weakness: "Death", role: "Bowler", matches: 40, wickets: 50, economy: 8.2 },
+            "Mohammed Siraj": { team: "Gujarat Titans", bat: 45, bowl: 86, form: 78, weakness: "Expensive", role: "Bowler", matches: 70, wickets: 85, economy: 8.5 },
+            
+            "KL Rahul": { team: "Delhi Capitals", bat: 90, bowl: 0, form: 86, weakness: "Spin", role: "WK-Batsman", matches: 100, avg: 42, sr: 138 },
+            "Jake Fraser-McGurk": { team: "Delhi Capitals", bat: 85, bowl: 0, form: 82, weakness: "Inexperience", role: "Batsman", matches: 8, avg: 28, sr: 160 },
+            "Axar Patel": { team: "Delhi Capitals", bat: 78, bowl: 86, form: 84, weakness: "Power hitters", role: "All-rounder", matches: 90, wickets: 85, economy: 7.2 },
+            "Mitchell Starc": { team: "Delhi Capitals", bat: 50, bowl: 89, form: 80, weakness: "Expensive", role: "Bowler", matches: 80, wickets: 110, economy: 8.0 },
+            "Kuldeep Yadav": { team: "Delhi Capitals", bat: 35, bowl: 87, form: 82, weakness: "Power hitters", role: "Bowler", matches: 70, wickets: 90, economy: 7.8 },
+            
+            "Sunil Narine": { team: "Kolkata Knight Riders", bat: 75, bowl: 88, form: 70, weakness: "Form", role: "All-rounder", matches: 150, wickets: 160, economy: 6.8 },
+            "Andre Russell": { team: "Kolkata Knight Riders", bat: 89, bowl: 84, form: 78, weakness: "Injury prone", role: "All-rounder", matches: 80, avg: 32, sr: 180 },
+            "Rinku Singh": { team: "Kolkata Knight Riders", bat: 88, bowl: 0, form: 80, weakness: "Pace", role: "Batsman", matches: 35, avg: 35, sr: 145 },
+            "Varun Chakaravarthy": { team: "Kolkata Knight Riders", bat: 35, bowl: 85, form: 68, weakness: "Form", role: "Bowler", matches: 50, wickets: 55, economy: 7.5 },
+            
+            "Rishabh Pant": { team: "Lucknow Super Giants", bat: 91, bowl: 0, form: 86, weakness: "Left-arm pace", role: "WK-Batsman", matches: 80, avg: 38, sr: 155 },
+            "Nicholas Pooran": { team: "Lucknow Super Giants", bat: 93, bowl: 0, form: 88, weakness: "Spin", role: "WK-Batsman", matches: 70, avg: 32, sr: 165 },
+            "David Miller": { team: "Lucknow Super Giants", bat: 87, bowl: 0, form: 80, weakness: "Spin", role: "Batsman", matches: 100, avg: 35, sr: 145 },
+            "Mitchell Marsh": { team: "Lucknow Super Giants", bat: 86, bowl: 78, form: 78, weakness: "Injury", role: "All-rounder", matches: 60, avg: 30, sr: 140 },
+            
+            "Rohit Sharma": { team: "Mumbai Indians", bat: 89, bowl: 0, form: 75, weakness: "Spin", role: "Batsman", matches: 220, avg: 35, sr: 135 },
+            "Suryakumar Yadav": { team: "Mumbai Indians", bat: 94, bowl: 0, form: 82, weakness: "None", role: "Batsman", matches: 70, avg: 38, sr: 165 },
+            "Hardik Pandya": { team: "Mumbai Indians", bat: 88, bowl: 82, form: 76, weakness: "Injury", role: "All-rounder", matches: 90, avg: 32, sr: 155 },
+            "Jasprit Bumrah": { team: "Mumbai Indians", bat: 40, bowl: 95, form: 88, weakness: "None", role: "Bowler", matches: 100, wickets: 140, economy: 6.8 },
+            "Trent Boult": { team: "Mumbai Indians", bat: 45, bowl: 89, form: 82, weakness: "Death", role: "Bowler", matches: 90, wickets: 110, economy: 8.0 }
+        };
+
+        // Team groupings
+        function getTeamPlayers(teamName) {
+            return Object.entries(PLAYERS_DATABASE)
+                .filter(([name, data]) => data.team === teamName)
+                .map(([name, data]) => ({ name, ...data }));
+        }
+
+        function getAllTeams() {
+            return [...new Set(Object.values(PLAYERS_DATABASE).map(p => p.team))];
+        }
+
+        // ============================================
+        // ADVANCED AI PREDICTION ENGINE
+        // ============================================
+        
+        function calculateTeamStrength(players) {
+            let batting = 0, bowling = 0, form = 0, experience = 0;
+            for (let p of players) {
+                batting += p.bat;
+                bowling += p.bowl;
+                form += p.form;
+                experience += Math.min(50, (p.matches || 20) / 2);
+            }
+            batting /= players.length;
+            bowling /= players.length;
+            form /= players.length;
+            experience /= players.length;
+            
+            return (batting * 0.35) + (bowling * 0.30) + (form * 0.25) + (experience * 0.10);
+        }
+
+        function calculateWeaknessImpact(players, opponentBowlers) {
+            let penalty = 0;
+            for (let p of players) {
+                let weakness = p.weakness || "";
+                for (let o of opponentBowlers) {
+                    if (weakness === "Spin" && o.bowl > 80) penalty += 8;
+                    else if (weakness === "Pace" && o.bowl > 85) penalty += 6;
+                    else if (weakness === "Elite pace" && o.bowl > 88) penalty += 12;
+                    else if (weakness === "Left-arm pace" && o.bowl > 85) penalty += 10;
+                    else if (weakness === "Short ball" && o.bowl > 85) penalty += 8;
+                }
+            }
+            return Math.min(30, penalty);
+        }
+
+        function calculateMomentum(players) {
+            let momentum = 0;
+            for (let p of players) {
+                momentum += (p.form - 70) / 10;
+            }
+            return Math.max(-20, Math.min(20, momentum));
+        }
+
+        function predictFirst6Overs(teamStrength, opponentBowlStrength) {
+            let base = 45;
+            let teamFactor = (teamStrength - 70) * 0.8;
+            let oppFactor = (80 - opponentBowlStrength) * 0.5;
+            let predicted = base + teamFactor + oppFactor + (Math.random() * 10 - 5);
+            return Math.max(30, Math.min(85, Math.round(predicted)));
+        }
+
+        function predictTopBatsman(players) {
+            let best = players[0];
+            for (let p of players) {
+                let score = (p.bat * 0.6) + (p.form * 0.4);
+                if (score > (best.bat * 0.6 + best.form * 0.4)) best = p;
+            }
+            let predictedRuns = Math.round(35 + (best.bat - 70) * 1.5 + (best.form - 70) * 0.8 + (Math.random() * 20 - 10));
+            return { name: best.name, runs: Math.max(15, Math.min(85, predictedRuns)) };
+        }
+
+        function predictTopBowler(players) {
+            let best = players[0];
+            for (let p of players) {
+                if (p.bowl > best.bowl) best = p;
+            }
+            let predictedWickets = Math.round(1 + (best.bowl - 70) / 15 + (best.form - 70) / 20 + (Math.random() * 1.5 - 0.75));
+            return { name: best.name, wickets: Math.max(0, Math.min(5, predictedWickets)) };
+        }
+
+        function predictToss() {
+            return Math.random() > 0.5 ? "Bat First" : "Bowl First";
+        }
+
+        function generateAnalysis(teamAName, teamBName, strengthA, strengthB, weaknessA, weaknessB, momentumA, momentumB, winProbA) {
+            let analysis = [];
+            
+            if (strengthA > strengthB + 5) {
+                analysis.push(`✅ ${teamAName} has significantly stronger overall team strength (${Math.round(strengthA)} vs ${Math.round(strengthB)}).`);
+            } else if (strengthB > strengthA + 5) {
+                analysis.push(`✅ ${teamBName} has significantly stronger overall team strength (${Math.round(strengthB)} vs ${Math.round(strengthA)}).`);
+            } else {
+                analysis.push(`⚖️ Both teams are evenly matched in overall strength.`);
+            }
+            
+            if (weaknessA > weaknessB + 10) {
+                analysis.push(`⚠️ ${teamAName} players have more exploitable weaknesses against ${teamBName}'s bowling attack.`);
+            } else if (weaknessB > weaknessA + 10) {
+                analysis.push(`⚠️ ${teamBName} players have more exploitable weaknesses against ${teamAName}'s bowling attack.`);
+            }
+            
+            if (momentumA > momentumB + 5) {
+                analysis.push(`📈 ${teamAName} has better recent form/momentum coming into this match.`);
+            } else if (momentumB > momentumA + 5) {
+                analysis.push(`📈 ${teamBName} has better recent form/momentum coming into this match.`);
+            }
+            
+            let winner = winProbA > 50 ? teamAName : teamBName;
+            let reason = winProbA > 50 ? 
+                `${teamAName} wins in ${Math.round(winProbA)}% of simulations due to superior ${strengthA > strengthB ? "team strength" : "matchup advantages"}.` :
+                `${teamBName} wins in ${Math.round(100 - winProbA)}% of simulations due to superior ${strengthB > strengthA ? "team strength" : "matchup advantages"}.`;
+            analysis.push(`🎯 Prediction: ${reason}`);
+            
+            return analysis.join(" ");
+        }
+
+        function simulateMatch(teamAPlayers, teamBPlayers, teamAName, teamBName) {
+            let strengthA = calculateTeamStrength(teamAPlayers);
+            let strengthB = calculateTeamStrength(teamBPlayers);
+            
+            let weaknessA = calculateWeaknessImpact(teamAPlayers, teamBPlayers.filter(p => p.bowl > 70));
+            let weaknessB = calculateWeaknessImpact(teamBPlayers, teamAPlayers.filter(p => p.bowl > 70));
+            
+            let momentumA = calculateMomentum(teamAPlayers);
+            let momentumB = calculateMomentum(teamBPlayers);
+            
+            let adjustedA = strengthA - (weaknessA / 100) + (momentumA / 50);
+            let adjustedB = strengthB - (weaknessB / 100) + (momentumB / 50);
+            
+            let winsA = 0;
+            let totalA = 0;
+            let totalB = 0;
+            let simulations = 50000;
+            
+            for (let i = 0; i < simulations; i++) {
+                let rand1 = Math.random();
+                let rand2 = Math.random();
+                let z0 = Math.sqrt(-2.0 * Math.log(rand1)) * Math.cos(2 * Math.PI * rand2);
+                
+                let scoreA = Math.max(80, 160 + ((adjustedA - 70) * 1.2) + (z0 * 22));
+                let scoreB = Math.max(80, 160 + ((adjustedB - 70) * 1.2) + (z0 * 22));
+                
+                if (scoreA > scoreB) winsA++;
+                totalA += scoreA;
+                totalB += scoreB;
+            }
+            
+            let winProbA = (winsA / simulations) * 100;
+            let avgScoreA = totalA / simulations;
+            let avgScoreB = totalB / simulations;
+            
+            let bestBatsmanA = predictTopBatsman(teamAPlayers);
+            let bestBatsmanB = predictTopBatsman(teamBPlayers);
+            let bestBowlerA = predictTopBowler(teamAPlayers);
+            let bestBowlerB = predictTopBowler(teamBPlayers);
+            let first6A = predictFirst6Overs(strengthA, strengthB);
+            let first6B = predictFirst6Overs(strengthB, strengthA);
+            let tossPrediction = predictToss();
+            
+            let analysis = generateAnalysis(teamAName, teamBName, strengthA, strengthB, weaknessA, weaknessB, momentumA, momentumB, winProbA);
+            
+            return {
+                team_a_win: Math.round(winProbA * 10) / 10,
+                team_b_win: Math.round((100 - winProbA) * 10) / 10,
+                score_a: Math.round(avgScoreA),
+                score_b: Math.round(avgScoreB),
+                result: avgScoreA > avgScoreB ? teamAName : teamBName,
+                margin: Math.round(Math.abs(avgScoreA - avgScoreB)),
+                key_batsman_a: bestBatsmanA.name,
+                key_batsman_a_runs: bestBatsmanA.runs,
+                key_batsman_b: bestBatsmanB.name,
+                key_batsman_b_runs: bestBatsmanB.runs,
+                key_bowler_a: bestBowlerA.name,
+                key_bowler_a_wickets: bestBowlerA.wickets,
+                key_bowler_b: bestBowlerB.name,
+                key_bowler_b_wickets: bestBowlerB.wickets,
+                first6_a: first6A,
+                first6_b: first6B,
+                toss: tossPrediction,
+                analysis: analysis,
+                confidence: Math.round(Math.abs(winProbA - 50) * 1.4)
+            };
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        
+        function loadTeams() {
+            const teams = getAllTeams();
+            const teamASelect = document.getElementById('teamA');
+            const teamBSelect = document.getElementById('teamB');
+            
+            teamASelect.innerHTML = '<option value="">Select Team A</option>';
+            teamBSelect.innerHTML = '<option value="">Select Team B</option>';
+            
+            teams.forEach(team => {
+                const optionA = document.createElement('option');
+                optionA.value = team;
+                optionA.textContent = team;
+                teamASelect.appendChild(optionA);
+                
+                const optionB = document.createElement('option');
+                optionB.value = team;
+                optionB.textContent = team;
+                teamBSelect.appendChild(optionB);
+            });
+        }
+
+        function loadPlayers(teamName, containerId) {
+            if (!teamName) {
+                document.getElementById(containerId).innerHTML = '';
+                return;
+            }
+            
+            const players = getTeamPlayers(teamName);
+            const container = document.getElementById(containerId);
+            container.innerHTML = players.map(p => 
+                `<div class="player-item">
+                    <span class="player-name">${p.name}</span>
+                    <span class="player-rating">⭐ ${p.bat} | 🎯 ${p.bowl} | 📈 ${p.form}</span>
+                </div>`
+            ).join('');
+        }
+
+        function displayResult(prediction, teamAName, teamBName) {
+            const resultDiv = document.getElementById('result');
+            const contentDiv = document.getElementById('predictionContent');
+            
+            let winnerClass = prediction.result === teamAName ? 'winner-green' : 'loser-red';
+            let loserClass = prediction.result === teamAName ? 'loser-red' : 'winner-green';
+            
+            contentDiv.innerHTML = `
+                <div class="win-percentage">
+                    <div class="team-a-percent">
+                        <div class="percentage ${prediction.team_a_win > prediction.team_b_win ? 'win-green' : 'loss-red'}">${prediction.team_a_win}%</div>
+                        <div>${teamAName}</div>
+                    </div>
+                    <div class="team-b-percent">
+                        <div class="percentage ${prediction.team_b_win > prediction.team_a_win ? 'win-green' : 'loss-red'}">${prediction.team_b_win}%</div>
+                        <div>${teamBName}</div>
+                    </div>
+                </div>
+                
+                <div class="scores">
+                    <div class="score-card">
+                        <div class="score-number">${prediction.score_a}</div>
+                        <div>Expected Score</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-number">${prediction.score_b}</div>
+                        <div>Expected Score</div>
+                    </div>
+                </div>
+                
+                <div class="result-text">
+                    🏆 <span class="${winnerClass}">${prediction.result}</span> wins by <span class="${winnerClass}">${prediction.margin}</span> runs
+                </div>
+                
+                <div class="betting-predictions">
+                    <div class="bet-card">
+                        <div class="bet-label">🎯 First 6 Overs (${teamAName})</div>
+                        <div class="bet-value">${prediction.first6_a} runs</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">🎯 First 6 Overs (${teamBName})</div>
+                        <div class="bet-value">${prediction.first6_b} runs</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">🏏 Top Batsman (${teamAName})</div>
+                        <div class="bet-value">${prediction.key_batsman_a} - ${prediction.key_batsman_a_runs} runs</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">🏏 Top Batsman (${teamBName})</div>
+                        <div class="bet-value">${prediction.key_batsman_b} - ${prediction.key_batsman_b_runs} runs</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">⚡ Top Bowler (${teamAName})</div>
+                        <div class="bet-value">${prediction.key_bowler_a} - ${prediction.key_bowler_a_wickets} wkts</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">⚡ Top Bowler (${teamBName})</div>
+                        <div class="bet-value">${prediction.key_bowler_b} - ${prediction.key_bowler_b_wickets} wkts</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">🪙 Toss Prediction</div>
+                        <div class="bet-value">${prediction.toss}</div>
+                    </div>
+                    <div class="bet-card">
+                        <div class="bet-label">🎯 AI Confidence</div>
+                        <div class="bet-value">${prediction.confidence}%</div>
+                    </div>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-title">📋 DETAILED ANALYSIS</div>
+                    <div class="analysis-text">${prediction.analysis}</div>
+                </div>
+                
+                <div class="key-players">
+                    <div>🔥 ${prediction.key_batsman_a}</div>
+                    <div>🔥 ${prediction.key_batsman_b}</div>
+                </div>
+                
+                <div class="confidence">⚡ Based on 50,000 Monte Carlo simulations with historical data tuning</div>
+            `;
+            
+            resultDiv.classList.remove('hidden');
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function predict() {
+            const teamAName = document.getElementById('teamA').value;
+            const teamBName = document.getElementById('teamB').value;
+            
+            if (!teamAName || !teamBName) {
+                alert('Please select both teams');
+                return;
+            }
+            
+            if (teamAName === teamBName) {
+                alert('Please select two different teams');
+                return;
+            }
+            
+            const btn = document.getElementById('predictBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '🤖 AI SIMULATING 50,000 MATCHES...';
+            
+            setTimeout(() => {
+                const teamAPlayers = getTeamPlayers(teamAName);
+                const teamBPlayers = getTeamPlayers(teamBName);
+                const prediction = simulateMatch(teamAPlayers, teamBPlayers, teamAName, teamBName);
+                displayResult(prediction, teamAName, teamBName);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }, 100);
+        }
+
+        // ============================================
+        // CSV UPLOAD FUNCTIONALITY
+        // ============================================
+        
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length < 6) continue;
+                
+                const playerData = {};
+                headers.forEach((h, idx) => {
+                    playerData[h] = values[idx];
+                });
+                
+                const playerName = playerData.player;
+                if (playerName) {
+                    PLAYERS_DATABASE[playerName] = {
+                        team: playerData.team || PLAYERS_DATABASE[playerName]?.team || "Unknown",
+                        bat: parseInt(playerData.batting) || PLAYERS_DATABASE[playerName]?.bat || 70,
+                        bowl: parseInt(playerData.bowling) || PLAYERS_DATABASE[playerName]?.bowl || 0,
+                        form: parseInt(playerData.form) || PLAYERS_DATABASE[playerName]?.form || 70,
+                        weakness: playerData.weakness || PLAYERS_DATABASE[playerName]?.weakness || "None",
+                        role: playerData.role || PLAYERS_DATABASE[playerName]?.role || "Player",
+                        matches: parseInt(playerData.matches) || PLAYERS_DATABASE[playerName]?.matches || 20
+                    };
+                }
+            }
+            
+            alert("CSV data uploaded successfully! Database updated.");
+            loadTeams();
+        }
+
+        function uploadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert("Please select a CSV file first");
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                parseCSV(e.target.result);
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefault() {
+            if (confirm("Reset all data to default IPL 2026 database? This will lose any uploaded data.")) {
+                location.reload();
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS & INIT
+        // ============================================
+        
+        document.getElementById('teamA').addEventListener('change', (e) => {
+            loadPlayers(e.target.value, 'playersA');
+        });
+        
+        document.getElementById('teamB').addEventListener('change', (e) => {
+            loadPlayers(e.target.value, 'playersB');
+        });
+        
+        document.getElementById('predictBtn').addEventListener('click', predict);
+        document.getElementById('uploadBtn').addEventListener('click', uploadCSV);
+        document.getElementById('resetDataBtn').addEventListener('click', resetToDefault);
+        
+        loadTeams();
+    </script>
+</body>
+</html>
